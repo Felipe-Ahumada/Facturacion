@@ -43,4 +43,6 @@ public class DescuentoService {
     public List<Descuento> obtenerTodos() {
         return descuentoRepository.findAll();
     }
+
+    
 }
