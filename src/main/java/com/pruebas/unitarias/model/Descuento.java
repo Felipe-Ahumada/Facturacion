@@ -1,4 +1,4 @@
-package com.facturacion.facturacion.model;
+package com.pruebas.unitarias.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.facturacion.facturacion.controller;
+package com.pruebas.unitarias.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.facturacion.facturacion.model.Descuento;
-import com.facturacion.facturacion.service.DescuentoService;
+import com.pruebas.unitarias.model.Descuento;
+import com.pruebas.unitarias.service.DescuentoService;
 
 @RestController
 @RequestMapping("/api/descuentos")

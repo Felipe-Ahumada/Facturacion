@@ -10,9 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.facturacion.facturacion.model.Descuento;
-import com.facturacion.facturacion.repository.DescuentoRepository;
-import com.facturacion.facturacion.service.DescuentoService;
+import com.pruebas.unitarias.model.Descuento;
+import com.pruebas.unitarias.repository.DescuentoRepository;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;

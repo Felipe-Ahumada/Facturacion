@@ -1,12 +1,12 @@
-package com.facturacion.facturacion.service;
+package com.pruebas.unitarias.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.facturacion.facturacion.model.Descuento;
-import com.facturacion.facturacion.repository.DescuentoRepository;
+import com.pruebas.unitarias.model.Descuento;
+import com.pruebas.unitarias.repository.DescuentoRepository;
 
 @Service
 public class DescuentoService {
