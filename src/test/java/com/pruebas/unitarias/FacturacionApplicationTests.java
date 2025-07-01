@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class FacturacionApplicationTests {
 
 	@Test
-	void contextLoads() {
-	}
+    void contextLoads() {
+        FacturacionApplication.main(new String[] {});
+    }
 
 }

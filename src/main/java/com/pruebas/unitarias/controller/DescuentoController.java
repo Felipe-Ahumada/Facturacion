@@ -3,6 +3,9 @@ package com.pruebas.unitarias.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,8 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pruebas.unitarias.assemblers.DescuentoModelAssembler;
 import com.pruebas.unitarias.model.Descuento;
 import com.pruebas.unitarias.service.DescuentoService;
+
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/api/descuentos")
@@ -28,6 +36,9 @@ public class DescuentoController {
     public DescuentoController(DescuentoService service) {
         this.service = service;
     }
+
+    @Autowired
+    private DescuentoModelAssembler assembler;
 
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Descuento d) {
@@ -57,11 +68,18 @@ public class DescuentoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        if (service.eliminarDescuento(id)) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
+        try {
+            if (service.eliminarDescuento(id)) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "mensaje", "No existe descuento con ID",
+                    "id", id
+                ));
+            }
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "mensaje", "No existe descuento con ID",
+                "mensaje", "Descuento no encontrado",
                 "id", id
             ));
         }
@@ -73,24 +91,33 @@ public class DescuentoController {
             Long idDescuento = Long.parseLong(data.get("idDescuento").toString());
             double montoBase = Double.parseDouble(data.get("montoBase").toString());
             double resultado = service.aplicarDescuento(idDescuento, montoBase);
-            return ResponseEntity.ok(Map.of(
-                "montoFinal", resultado
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "mensaje", "Descuento no encontrado",
-                "error", e.getMessage()
-            ));
+            return ResponseEntity.ok(Map.of("montoFinal", resultado));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "mensaje", "Error en los datos enviados",
-                "error", e.getMessage()
-            ));
+            if (e instanceof NullPointerException || e instanceof NumberFormatException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "mensaje", "Error en los datos enviados",
+                    "error", e.getMessage()
+                ));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "mensaje", "Descuento no encontrado",
+                    "error", e.getMessage()
+                ));
+            }
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<Descuento>> listar() {
-        return ResponseEntity.ok(service.obtenerTodos());
+    public CollectionModel<EntityModel<Descuento>> listar() {
+        List<Descuento> lista = service.obtenerTodos();
+
+        List<EntityModel<Descuento>> descuentos = lista.stream()
+            .map(assembler::toModel)
+            .toList();
+
+        return CollectionModel.of(descuentos,
+            linkTo(methodOn(DescuentoController.class).listar()).withSelfRel()
+        );
     }
+
 }

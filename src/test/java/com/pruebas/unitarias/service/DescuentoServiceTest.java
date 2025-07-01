@@ -45,6 +45,7 @@ class DescuentoServiceTest {
         verify(descuentoRepository).save(nuevo);
     }
 
+    // Test para editar un descuento existente
     @Test
     void testEditarDescuento() {
         Descuento actual = new Descuento(1L, "Antiguo", 5.0);
@@ -62,6 +63,7 @@ class DescuentoServiceTest {
         verify(descuentoRepository).save(actual);
     }
 
+    // Test para eliminar un descuento existente
     @Test
     void testEliminarDescuento_Existente() {
         when(descuentoRepository.existsById(1L)).thenReturn(true);
@@ -72,6 +74,7 @@ class DescuentoServiceTest {
         verify(descuentoRepository).deleteById(1L);
     }
 
+    // Test para aplicar un descuento
     @Test
     void testAplicarDescuento() {
         Descuento descuento = new Descuento(1L, "Navidad", 20.0);
@@ -83,6 +86,7 @@ class DescuentoServiceTest {
         assertThat(resultado).isEqualTo(80.0);
     }
 
+    // Test para obtener todos los descuentos
     @Test
     void testObtenerTodos() {
         Descuento d1 = new Descuento(1L, "Promo 1", 5.0);
@@ -95,6 +99,19 @@ class DescuentoServiceTest {
         assertThat(resultado).hasSize(2).contains(d1, d2);
         verify(descuentoRepository).findAll();
     }
-}
+
 
 //Que pasa si no encuentro un descuento?
+
+    // Test para eliminar un descuento que no existe
+    @Test
+    void testEliminarDescuento_NoExistente() {
+        when(descuentoRepository.existsById(99L)).thenReturn(false);
+
+        boolean eliminado = descuentoService.eliminarDescuento(99L);
+
+        assertThat(eliminado).isFalse();
+        verify(descuentoRepository, never()).deleteById(any());
+    }
+}
+
